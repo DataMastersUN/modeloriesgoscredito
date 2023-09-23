@@ -1,0 +1,70 @@
+{%extends 'base.html'%}
+
+{%block title%} Home {%endblock%}
+
+{%block content%} 
+    <div class="programming-stats">
+        <div class="chart-container"><canvas class="my-chart"></canvas></div>
+        <div class="details">
+            <ul></ul>
+        </div>
+    </div>
+    
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <div>
+        <form action="" method="post">
+            <label for="x1">Ingreses X1</label>
+            <input type="number" name="x1" id="x1" required>
+            <br>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labels = {{labels | tojson}}
+        const data = {{datos | tojson}}
+        const chartData = { 
+            labels: labels, 
+            data: data };
+        const myChart = document.querySelector(".my-chart");
+        const ul = document.querySelector(".programming-stats .details ul");
+        
+        new Chart(myChart,{
+            type: "doughnut",
+            data: {
+                labels: labels,
+                datasets: [{
+                    labels: "Grafica",
+                    data: data,
+                }]
+            },
+            options: {
+                borderWidth: 6,
+                borderRadius: 2,
+                hoverBorderWidth: 0,
+                plugins:{
+                    legend: {
+                        display: false,
+                    }
+                }
+            }
+        });
+        
+        const populateUl = () => {
+            chartData.labels.forEach((l, i) => {
+                let li = document.createElement("li");
+                li.innerHTML = `${l}: <span class='percentage'>${chartData.data[i]}</span>`;
+                ul.appendChild(li);
+            }); 
+        };
+        
+        populateUl();
+    </script>
+              
+    <p>Fecha consulta: {{fecha | today }}</p>
+    
+{%endblock%}
